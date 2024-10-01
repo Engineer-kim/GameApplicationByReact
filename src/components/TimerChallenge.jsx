@@ -3,7 +3,7 @@ import ResultModal from "./ResultModal";
 
 export default function TimerChallenge({ title, targetTime }) {
 
-    const timer = useRef();
+    const timer = useRef();  //리액트에서 dom 에 직접 접근 하기 위함
     const dialog = useRef();
 
     const [timeRemaining , setTimeRemaining] = useState(targetTime * 1000)
@@ -11,9 +11,13 @@ export default function TimerChallenge({ title, targetTime }) {
     const timerIsActive = timeRemaining > 0 && timeRemaining < targetTime * 1000
 
     if(timeRemaining <= 0){
-        clearInterval(timer.current)
+        clearInterval(timer.current)  //timer.current 로 접근하는이유 객체가 아닌 값에 접근해야 하기 때문         
         setTimeRemaining(targetTime * 1000)
-        dialog.current.open()
+        dialog.current.open()  //ResulModal 에서 정의 됨
+    }
+
+    function handleReset(){
+        setTimeRemaining(targetTime * 1000)
     }
 
     function handleStart() {
@@ -29,7 +33,8 @@ export default function TimerChallenge({ title, targetTime }) {
 
     return (
         <>
-          <ResultModal ref={dialog} targetTime={targetTime} result={"lost"}/>
+          <ResultModal ref={dialog} targetTime={targetTime} timeRemaining={timeRemaining}
+          handleReset={handleReset}/>
             <section className="challenge">
                 <h2>{title}</h2>
                 <p className="challenge-time">
@@ -37,7 +42,7 @@ export default function TimerChallenge({ title, targetTime }) {
                 </p>
                 <p>
                     <button onClick={timerIsActive ? handleStop : handleStart}>
-                        {timerIsActive ? 'Stop' : 'Start'}  start Challenge
+                        {timerIsActive ? 'Stop' : 'Start'}Challenge
                     </button>
                 </p>
                 <p className={timerIsActive ? 'active' : undefined} >
